@@ -1,8 +1,5 @@
 name: Viral Scraper
-on:
-  schedule:
-    - cron: '0 0 * * *' # Rozana raat 12 baje
-  workflow_dispatch: # Mobile se manual run karne ke liye
+on: [workflow_dispatch]
 
 jobs:
   scrape:
@@ -18,7 +15,8 @@ jobs:
           python-version: '3.9'
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install playwright playwright-stealth requests
           playwright install chromium
       - name: Run Script
         run: python bot.py
@@ -27,5 +25,5 @@ jobs:
           git config --global user.name 'bot'
           git config --global user.email 'bot@users.noreply.github.com'
           git add trends.csv
-          git commit -m "Auto-update trends"
+          git commit -m "Auto-update trends" || echo "No changes"
           git push
