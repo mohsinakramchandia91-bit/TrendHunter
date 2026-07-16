@@ -1,15 +1,17 @@
-name: Daily Scraper
+name: Viral Scraper
 on:
   schedule:
-    - cron: '0 0 * * *' # Har 24 ghante mein chalega
-  workflow_dispatch: # Mobile se aap manual "Run" bhi kar sakenge
+    - cron: '0 0 * * *' # Rozana raat 12 baje
+  workflow_dispatch: # Mobile se manual run karne ke liye
 
 jobs:
-  build:
+  scrape:
     runs-on: ubuntu-latest
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -18,12 +20,12 @@ jobs:
         run: |
           pip install -r requirements.txt
           playwright install chromium
-      - name: Run scraper
-        run: python scraper.py
-      - name: Commit results
+      - name: Run Script
+        run: python bot.py
+      - name: Commit & Push
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.name 'bot'
+          git config --global user.email 'bot@users.noreply.github.com'
           git add trends.csv
-          git commit -m "Auto-scrape: Trending Data"
+          git commit -m "Auto-update trends"
           git push
